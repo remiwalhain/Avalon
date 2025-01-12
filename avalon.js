@@ -238,7 +238,7 @@ function compileRoles() {
 
         // Populate the list of evil players
         for (let i = 0; i < playerNumber; i++) {
-            if (goodEvilList[i] == "Evil") {
+            if (goodEvilList[i] == "Evil" && selectedExtraRoles[i] != "Mordred") {
                 allEvil.push(playerArray[shuffledElements[i]]); // All the evil players
             }
             if (goodEvilList[i] == "Evil" && selectedExtraRoles[i] != "Oberon") {
