@@ -1,0 +1,66 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+    color: white;
+    text-align: center; 
+}
+
+#start-button {
+    padding: 20px 40px; /* Larger padding */
+    font-size: 24px;    /* Bigger text */
+    border-radius: 10px; /* Optional: rounded corners */
+    background-color: #555; /* Optional: distinct background color */
+    color: white;
+    cursor: pointer;
+}
+
+#nextButton {
+    padding: 20px 40px; /* Larger padding*/
+    font-size: 24px;    /* Bigger text */
+    border-radius: 10px; /* Optional: rounded corners */
+    background-color: #555; /* Optional: distinct background color */
+    color: white;
+    cursor: pointer;
+
+}
+
+#readyButton {
+    padding: 20px 40px; /* Larger padding */
+    font-size: 24px;    /* Bigger text */
+    border-radius: 10px; /* Optional: rounded corners */
+    background-color: #555; /* Optional: distinct background color */
+    color: white;
+    cursor: pointer;
+}
+
+#iAmButton {
+    padding: 20px 40px; /* Larger padding */
+    font-size: 24px;    /* Bigger text */
+    border-radius: 10px; /* Optional: rounded corners */
+    background-color: #555; /* Optional: distinct background color */
+    color: white;
+    cursor: pointer;
+}
+
+#contButton {
+    padding: 20px 40px; /* Larger padding */
+    font-size: 24px;    /* Bigger text */
+    border-radius: 10px; /* Optional: rounded corners */
+    background-color: #555; /* Optional: distinct background color */
+    color: white;
+    cursor: pointer;
+
+}
+
+#reveal-roles {
+    margin-top: 100px; /* Moves the reveal-roles 100px down from the top */
+    text-align: center; /* Optional: Centers the buttons horizontally */
+}
+
+.hidden {
+    display: none;
+}

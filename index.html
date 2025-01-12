@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <script src="avalon.js"></script>
+</head>
+
+<body>
+    <div id="start-page">
+        <h1>Avalon</h1>
+        <h2>Enter Number of Players</h2>
+        <input type="number" id="player-count" placeholder="5-10 players">
+        <br>
+        <br>
+        <button id="start-button" onclick="goToNamePage()">Start</button>
+    </div>
+
+    <div id="name-page" class="hidden">
+        <h1>Enter Player Names</h1>
+        <div id="text-inputs-container"></div>
+        <button id="nextButton" onclick="submitNames()">Next</button>
+    </div>
+
+    <div id="extra-roles-page" class="hidden">
+        <h1>Select Extra Roles</h1>
+        <form id="checkbox-form">
+            <label>
+                <input type="checkbox" name="Percival" value="Percival" class="Good"> Percival
+            </label>
+            <br>
+            <label>
+                <input type="checkbox" name="Mordred" value="Mordred" class="Evil"> Mordred
+            </label>
+            <br>
+            <label>
+                <input type="checkbox" name="Morgana" value="Morgana" class="Evil"> Morgana
+            </label>
+            <br>
+            <label>
+                <input type="checkbox" name="Oberon" value="Oberon" class="Evil"> Oberon
+            </label>
+        </form>
+        <br>
+        <button id="nextButton" onclick="compileRoles()">Next</button>
+    </div>
+
+    <div id="reveal-prompt-page" class="hidden">
+        <br>
+        <h2>Each player will now receive their secret role</h2>
+        <h1>Do not share your role with others</h1>
+        <button id="readyButton" onclick="readyToReveal()">Ready</button>
+    </div>
+
+    <div id="reveal-roles-page" class="hidden">
+        <div id="reveal-roles" style="margin-top: 100px; text-align: center;">
+        </div>
+    </div>
+
+</body>
+</html>
