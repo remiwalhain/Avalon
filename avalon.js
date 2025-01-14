@@ -1,3 +1,5 @@
+// Global Constants
+// ---------------------------------------------------------------------------------------------
 // The good to evil player ratio, indices 0-5 are total players 5-10 respectively
 const playerRatio = [[3, 2], [4, 2], [4, 3], [5, 3], [6, 3], [6,4]];
 
@@ -8,7 +10,7 @@ const questNumbers = [[2,3,2,3,3], [2,3,4,3,4], [2,3,3,4,4], [3,4,4,5,5]];
 const rolesDictionary = {
     "Loyal Servant of Arthur": "You are on the side of Good.",
     "Minion of Mordred": "You are on the side of Evil. The other Minions of Mordred ",
-    "Merlin": "You are on the side of Good. The Minion of Mordred ",
+    "Merlin": "You are on the side of Good. The other Minions of Mordred ",
     "Assassin": "You are on the side of Evil. The other Minions of Mordred ",
     "Percival": "You are on the side of Good. Merlin is ",
     "Mordred": "You are on the side of Evil. The other Minions of Mordred ",
@@ -18,6 +20,9 @@ const rolesDictionary = {
 
 // Players are the keys, roles are the values
 let playerDictionary = {};
+
+// Players are the keys, Good or Bad are the values
+let playerTeamDictionary = {};
 
 // Define some global objects
 let playerNumber = 0;
@@ -33,6 +38,8 @@ let oberonEvil = []; // Oberon is never in this list, this is shown to all other
 let filteredOberon;
 let percival = []; // This contains Merlin and Morgana, if Morgana is playing
 let currentIndex = 0;
+
+// ---------------------------------------------------------------------------------------------
 
 // Helper function to randomly shuffle elements of an array
 function shuffleArray(array) {
@@ -234,6 +241,7 @@ function compileRoles() {
         // Populate the dictionaries
         for (let i = 0; i < playerNumber; i++) {
             playerDictionary[playerArray[shuffledElements[i]]] = selectedExtraRoles[i];
+            playerTeamDictionary[playerArray[shuffledElements[i]]] = goodEvilList[i];
         }
 
         // Populate the list of evil players
@@ -250,12 +258,15 @@ function compileRoles() {
         }
        
         console.log(playerDictionary);
+        console.log(goodEvilList);
+        console.log(playerTeamDictionary);
         console.log(allEvil);
         console.log(oberonEvil);
         console.log(percival);
         // We have a playerArray (the names of the players)
         // We have a selectedExtraRoles array (all the roles in the given game)
         // We have a playerDictionary which associates each player to their role
+        // We have a playerTeamDictionary which associates each player to their team (good evil)
         // We have a random shuffledElements array (numbers [0 to number of players - 1] shuffled randomly), which links the player name 
         // at index 0,1,2... to the role at index shuffledElements[0], shuffledElements[1], shuffledElements[2],...
         document.getElementById('extra-roles-page').classList.add('hidden');
@@ -277,7 +288,9 @@ function renderButton() {
         button.addEventListener("click", showText);
         revealContainer.appendChild(button);
     } else {
-        revealContainer.textContent = "All strings have been displayed!";
+        document.getElementById('reveal-roles-page').classList.add('hidden');
+        document.getElementById('quest-page').classList.remove('hidden');
+        initQuests();
     }
 }
 
@@ -379,4 +392,62 @@ function readyToReveal() {
     document.getElementById('reveal-prompt-page').classList.add('hidden');
     document.getElementById('reveal-roles-page').classList.remove('hidden');
     renderButton();
+}
+
+// NOTE: The 4th Quest in games of 7 or more requires at least two Fails to be a failed Quest
+// playerArray is an array of each player name
+// playerDictionary associates each player to their role
+// playerTeamDictionary associates each player to their team (good evil)
+
+// Calls the appropriate function to initiate the appropriate gameplay
+function initQuests() {
+    switch(playerNumber) {
+        case "5":
+            fivePlayers();
+        break;
+
+        case "6":
+            sixPlayers();
+        break;
+
+        case "7":
+            sevenPlayers();
+        break;
+
+        case "8":
+        case "9":
+        case "10":
+            morePlayers();
+        break;
+
+    }
+}
+
+function fivePlayers() {
+    // For each quest, present the corresponding prompts
+    let i = 1;
+    const container = document.getElementById("quest-launch");
+    container.innerHTML = "";
+
+    const questLeader = document.createElement("p");
+    const questText = document.createElement("p");
+    questLeader.textContent = `${playerArray[i-1]}` + " is the Team Leader for quest " + `${i}`;
+    questText.textContent = "Select the players to go on this quest";
+
+    const questTeamBoxes = document.createElement("checkbox");
+    container.appendChild(questLeader);
+    container.appendChild(questText);
+
+}
+
+function sixPlayers() {
+
+}
+
+function sevenPlayers() {
+
+}
+
+function morePlayers() {
+
 }
