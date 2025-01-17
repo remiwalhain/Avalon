@@ -24,7 +24,7 @@ let playerDictionary = {};
 // Players are the keys, Good or Bad are the values
 let playerTeamDictionary = {};
 
-// Define some global objects
+// Global variables for setup
 let playerNumber = 0;
 let playerArray = [];
 let selectedExtraRoles = [];
@@ -37,10 +37,12 @@ let filteredEvils;
 let oberonEvil = []; // Oberon is never in this list, this is shown to all other Evil
 let filteredOberon;
 let percival = []; // This contains Merlin and Morgana, if Morgana is playing
+
+// Global variables for gameplay
 let currentIndex = 0;
 let playerNumbersIndex;
 let selectedPlayers = []; // Players selected to go on a quest
-let quest = 1;
+let quest = 1; // Counter to keep track of the quest number
 let questLeaderIndex = 0;
 let questRejects = 0;
 let questLog = []; // This tracks whether the quests passed or failed
@@ -116,7 +118,7 @@ function submitNames() {
 // For 10 players, you can add 4 extra roles
 
 function compileRoles() {
-    // Compile the total roles (default and extra) into an array
+    // Compiles the total roles (default and extra) into an array
     // Assign extra roles (if any) and default roles to all players
     const checkboxes = document.querySelectorAll('#checkbox-form input[type="checkbox"]');
     const selectedExtraRolesClass = Array.from(checkboxes).filter(checkbox => checkbox.checked);
@@ -266,11 +268,11 @@ function compileRoles() {
             }
         }
        
-        // We have a playerArray (the names of the players)
-        // We have a selectedExtraRoles array (all the roles in the given game)
-        // We have a playerDictionary which associates each player to their role
-        // We have a playerTeamDictionary which associates each player to their team (good evil)
-        // We have a random shuffledElements array (numbers [0 to number of players - 1] shuffled randomly), which links the player name 
+        // playerArray (the names of the players)
+        // selectedExtraRoles array (all the roles in the given game)
+        // playerDictionary which associates each player to their role
+        // playerTeamDictionary which associates each player to their team (good evil)
+        // shuffledElements array (numbers [0 to number of players - 1] shuffled randomly), which links the player name 
         // at index 0,1,2... to the role at index shuffledElements[0], shuffledElements[1], shuffledElements[2],...
         document.getElementById('extra-roles-page').classList.add('hidden');
         document.getElementById('reveal-prompt-page').classList.remove('hidden');
@@ -278,7 +280,7 @@ function compileRoles() {
     
 }
 
-// Function to render the current button
+// Function to render the role-reveal button
 function renderButton() {
     const revealContainer = document.getElementById("reveal-roles");
     revealContainer.innerHTML = ""; // Clear previous content
@@ -434,11 +436,14 @@ function launchQuest() {
     const container = document.getElementById("quest-launch");
     container.innerHTML = "";
 
+    const questTitle = document.createElement("h2");
     const questLeader = document.createElement("p");
     const questText = document.createElement("p");
     // questLeaderIndex is player index because if a quest rejects, the leader is different but the quest number is the same
-    questLeader.textContent = `${playerArray[questLeaderIndex % playerNumber]}` + " is the Team Leader for quest " + `${quest}`;
+    questTitle.textContent = "Quest " + `${quest}`;
+    questLeader.textContent = `${playerArray[questLeaderIndex % playerNumber]}` + " is the Team Leader";
     questText.textContent = "Select " + `${questNumbers[playerNumbersIndex][quest-1]}`+ " players to go on this quest";
+    container.appendChild(questTitle);
     container.appendChild(questLeader);
     container.appendChild(questText);
 
@@ -480,10 +485,11 @@ function launchQuest() {
         if (questNumbers[playerNumbersIndex][quest-1] != selectedPlayers.length) {
             alert("Select exactly " + `${questNumbers[playerNumbersIndex][quest-1]}` + " players");
             selectedPlayers = [];
-            return // Re-iterates in the while loop without changing the quest counter
+            launchQuest(); // Re-iterates in the while loop without changing the quest counter
         } else {
-            questRejects++; // Add a fail
-            questLeaderIndex++;
+            questRejects++; // Add a reject
+            document.getElementById("quest-page").classList.add('hidden');
+            document.getElementById("quest-reject").classList.remove('hidden');
             rejectQuest();
             return
         }
@@ -493,6 +499,7 @@ function launchQuest() {
     acceptTeam.addEventListener("click", () => {
         const checkboxes = container.querySelectorAll('input[name="questTeam"]:checked');
         checkboxes.forEach(checkbox => selectedPlayers.push(checkbox.value));
+        console.log(selectedPlayers);
         if (questNumbers[playerNumbersIndex][quest-1] != selectedPlayers.length) {
             alert("Select exactly " + `${questNumbers[playerNumbersIndex][quest-1]}` + " players");
             selectedPlayers = [];
@@ -502,7 +509,7 @@ function launchQuest() {
             document.getElementById("quest-execute").classList.remove('hidden');
             playerTurn = 0;
             acceptQuest();
-            questLeaderIndex++;
+            // questLeaderIndex++;
             return
         }
         
@@ -531,7 +538,28 @@ function launchQuest() {
 
 // If team is rejected for a quest
 function rejectQuest() {
+    const container = document.getElementById("quest-reject-message");
+    const rejectedMessage = document.createElement("h2");
+    const passPhoneMessage = document.createElement("p");
+    const rejectedButton = document.createElement("button");
+    
+    rejectedMessage.textContent = `${playerArray[questLeaderIndex % playerNumber]}` +"'s team was rejected";
+    passPhoneMessage.textContent = "Pass the phone to " + `${playerArray[(questLeaderIndex + 1) % playerNumber]}`;
+    rejectedButton.textContent = "Continue";
+    
+    container.appendChild(rejectedMessage);
+    container.appendChild(passPhoneMessage);
+    container.appendChild(rejectedButton);
 
+    rejectedButton.addEventListener("click", () => {
+        selectedPlayers = []; 
+        questLeaderIndex++;
+        container.innerHTML = "";
+
+        document.getElementById("quest-reject").classList.add('hidden');
+        document.getElementById("quest-page").classList.remove('hidden');
+        launchQuest();
+    })
 }
 
 // If team is accepted to go on the quest
@@ -539,6 +567,7 @@ function acceptQuest() {
     if (selectedPlayers.length == playerTurn) { // If each player has voted
         const seeResults = document.getElementById("quest-vote");
         seeResults.innerHTML = "";
+
         const revealButton = document.createElement("button");
         revealButton.textContent = "Reveal Results";
         revealButton.addEventListener("click", () => {
@@ -550,7 +579,7 @@ function acceptQuest() {
         
     } else {
         const voteContainer = document.getElementById("quest-vote");
-        voteContainer.innerHTML = ""; // Clear previous content
+        voteContainer.innerHTML = ""; 
 
         const passPhone = document.createElement("h2");
         const passButton = document.createElement("button");
@@ -567,9 +596,15 @@ function acceptQuest() {
         });
 
         failButton.addEventListener("click", () => {
-            questResults.push("red"); // Fails will always be at the end
-            playerTurn++;
-            acceptQuest();
+            if (playerTeamDictionary[selectedPlayers[playerTurn]] == "Good") { // If a player is good, they cannot FAIL a quest
+                questResults.unshift("green");
+                playerTurn++;
+                acceptQuest();
+            } else {
+                questResults.push("red"); // Fails will always be at the end
+                playerTurn++;
+                acceptQuest();
+            }
         });
 
         voteContainer.appendChild(passPhone);
@@ -579,7 +614,6 @@ function acceptQuest() {
 }
 
 function displayResults() {
-    console.log(questResults);
     const recContainer = document.createElement("div");
     recContainer.style.position = "fixed"; // Sticks to the top of the viewport
     recContainer.style.top = "100px"; // Distance from the top of the screen
@@ -601,7 +635,7 @@ function displayResults() {
         }, 2000 + i * 1500); // Delay increases by 1 second for each box
     }
 
-    const totalDelay = 1000 + (selectedPlayers.length - 1) * 1500;
+    const totalDelay = 3000 + (selectedPlayers.length - 1) * 1500;
 
     if (questResults.includes("red")) { // Udates the questLog
         questLog.push("red");
@@ -622,9 +656,8 @@ function displayResults() {
 
             document.getElementById('quest-results').classList.add('hidden');
             document.getElementById('quest-page').classList.remove('hidden');
+            questLeaderIndex++;
             launchQuest();
         });
     }, totalDelay);
-
-   
 }
