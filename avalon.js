@@ -38,6 +38,15 @@ let oberonEvil = []; // Oberon is never in this list, this is shown to all other
 let filteredOberon;
 let percival = []; // This contains Merlin and Morgana, if Morgana is playing
 let currentIndex = 0;
+let playerNumbersIndex;
+let selectedPlayers = []; // Players selected to go on a quest
+let quest = 1;
+let questLeaderIndex = 0;
+let questRejects = 0;
+let questLog = []; // This tracks whether the quests passed or failed
+let squareColour = ["grey", "grey", "grey", "grey", "grey"];
+let questResults = [];
+let playerTurn = 0; // This tracks the player index during voting phase
 
 // ---------------------------------------------------------------------------------------------
 
@@ -257,12 +266,6 @@ function compileRoles() {
             }
         }
        
-        console.log(playerDictionary);
-        console.log(goodEvilList);
-        console.log(playerTeamDictionary);
-        console.log(allEvil);
-        console.log(oberonEvil);
-        console.log(percival);
         // We have a playerArray (the names of the players)
         // We have a selectedExtraRoles array (all the roles in the given game)
         // We have a playerDictionary which associates each player to their role
@@ -282,10 +285,13 @@ function renderButton() {
   
     if (currentIndex < playerNumber) {
         let thisPlayer = playerArray[currentIndex];
+        const passPhone = document.createElement("h2");
         const button = document.createElement("button");
+        passPhone.textContent = "Pass the phone to " + thisPlayer;
         button.textContent = "I am " + thisPlayer;
         button.id = "iAmButton";
         button.addEventListener("click", showText);
+        revealContainer.appendChild(passPhone);
         revealContainer.appendChild(button);
     } else {
         document.getElementById('reveal-roles-page').classList.add('hidden');
@@ -300,10 +306,10 @@ function showText() {
     const revealContainer = document.getElementById("reveal-roles");
     revealContainer.innerHTML = ""; // Clear previous content
   
-    const roleReveal = document.createElement("p");
+    const roleReveal = document.createElement("h2");
     const roleRules = document.createElement("p");
-    const continuePrompt = document.createElement("p");
     const roleExplained = document.createElement("p");
+    const continuePrompt = document.createElement("p");
 
     roleReveal.textContent = `Your role is ${playerDictionary[thisPlayer]}`;
     switch (playerDictionary[thisPlayer]) {
@@ -403,51 +409,222 @@ function readyToReveal() {
 function initQuests() {
     switch(playerNumber) {
         case "5":
-            fivePlayers();
+            playerNumbersIndex = 0;
         break;
 
         case "6":
-            sixPlayers();
+            playerNumbersIndex = 1;
         break;
 
         case "7":
-            sevenPlayers();
+            playerNumbersIndex = 2;
         break;
 
         case "8":
         case "9":
         case "10":
-            morePlayers();
+            playerNumbersIndex = 3;
         break;
-
     }
+    launchQuest();
 }
 
-function fivePlayers() {
+function launchQuest() {
     // For each quest, present the corresponding prompts
-    let i = 1;
     const container = document.getElementById("quest-launch");
     container.innerHTML = "";
 
     const questLeader = document.createElement("p");
     const questText = document.createElement("p");
-    questLeader.textContent = `${playerArray[i-1]}` + " is the Team Leader for quest " + `${i}`;
-    questText.textContent = "Select the players to go on this quest";
-
-    const questTeamBoxes = document.createElement("checkbox");
+    // questLeaderIndex is player index because if a quest rejects, the leader is different but the quest number is the same
+    questLeader.textContent = `${playerArray[questLeaderIndex % playerNumber]}` + " is the Team Leader for quest " + `${quest}`;
+    questText.textContent = "Select " + `${questNumbers[playerNumbersIndex][quest-1]}`+ " players to go on this quest";
     container.appendChild(questLeader);
     container.appendChild(questText);
 
+    playerArray.forEach(player => {
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.id = player;
+        checkbox.name = "questTeam"; // Optional grouping name
+        checkbox.value = player;
+
+        const label = document.createElement("label");
+        label.htmlFor = player;
+        label.textContent = player;
+
+        container.appendChild(checkbox);
+        container.appendChild(label);
+        container.appendChild(document.createElement("br")); // For spacing
+    });
+    
+    const voteInstructions = document.createElement("p");
+    const rejectTeam = document.createElement("button");
+    const acceptTeam = document.createElement("button");
+    const spacer = document.createElement("span");
+
+    voteInstructions.textContent = "Vote on whether this team goes on quest " + `${quest}`;
+    rejectTeam.textContent = "Reject Team";
+    rejectTeam.id = "rejectButton";
+    acceptTeam.textContent = "Accept Team";
+    acceptTeam.id = "acceptButton";
+    spacer.textContent = "  ";
+    container.appendChild(voteInstructions);
+    container.appendChild(rejectTeam);
+    container.appendChild(spacer);
+    container.appendChild(acceptTeam);
+
+    rejectTeam.addEventListener("click", () => {
+        const checkboxes = container.querySelectorAll('input[name="questTeam"]:checked');
+        checkboxes.forEach(checkbox => selectedPlayers.push(checkbox.value));
+        if (questNumbers[playerNumbersIndex][quest-1] != selectedPlayers.length) {
+            alert("Select exactly " + `${questNumbers[playerNumbersIndex][quest-1]}` + " players");
+            selectedPlayers = [];
+            return // Re-iterates in the while loop without changing the quest counter
+        } else {
+            questRejects++; // Add a fail
+            questLeaderIndex++;
+            rejectQuest();
+            return
+        }
+        
+    });
+    
+    acceptTeam.addEventListener("click", () => {
+        const checkboxes = container.querySelectorAll('input[name="questTeam"]:checked');
+        checkboxes.forEach(checkbox => selectedPlayers.push(checkbox.value));
+        if (questNumbers[playerNumbersIndex][quest-1] != selectedPlayers.length) {
+            alert("Select exactly " + `${questNumbers[playerNumbersIndex][quest-1]}` + " players");
+            selectedPlayers = [];
+            return // Re-iterates in the while loop without changing the quest counter
+        } else {
+            document.getElementById("quest-page").classList.add('hidden');
+            document.getElementById("quest-execute").classList.remove('hidden');
+            playerTurn = 0;
+            acceptQuest();
+            questLeaderIndex++;
+            return
+        }
+        
+    });
+
+    // Adding a container for the quest squares
+    const squaresContainer = document.createElement("div");
+    squaresContainer.style.position = "fixed"; // Sticks to the bottom of the viewport
+    squaresContainer.style.bottom = "50px"; // Distance from the bottom of the screen
+    squaresContainer.style.left = "50%"; // Centers the container horizontally
+    squaresContainer.style.transform = "translateX(-50%)"; // Centers based on its own width
+    squaresContainer.style.display = "flex"; // Arrange squares in a row
+    squaresContainer.style.gap = "10px"; // Space between squares
+
+    for (let i = 0; i < 5; i++) {
+        const square = document.createElement("div");
+        square.style.width = "50px"; // Width of each square
+        square.style.height = "50px"; // Height of each square
+        square.style.backgroundColor = squareColour[i]; // Colour
+        squaresContainer.appendChild(square);
+    }
+      
+    container.appendChild(squaresContainer);
+
 }
 
-function sixPlayers() {
+// If team is rejected for a quest
+function rejectQuest() {
 
 }
 
-function sevenPlayers() {
+// If team is accepted to go on the quest
+function acceptQuest() {
+    if (selectedPlayers.length == playerTurn) { // If each player has voted
+        const seeResults = document.getElementById("quest-vote");
+        seeResults.innerHTML = "";
+        const revealButton = document.createElement("button");
+        revealButton.textContent = "Reveal Results";
+        revealButton.addEventListener("click", () => {
+            document.getElementById("quest-execute").classList.add('hidden');
+            document.getElementById("quest-results").classList.remove('hidden');
+            displayResults();
+        });
+        seeResults.appendChild(revealButton);
+        
+    } else {
+        const voteContainer = document.getElementById("quest-vote");
+        voteContainer.innerHTML = ""; // Clear previous content
 
+        const passPhone = document.createElement("h2");
+        const passButton = document.createElement("button");
+        const failButton = document.createElement("button");
+
+        passPhone.textContent = "Pass the phone to " + `${selectedPlayers[playerTurn]}`;
+        passButton.textContent = "PASS";
+        failButton.textContent = "FAIL";
+
+        passButton.addEventListener("click", () => {
+            questResults.unshift("green"); // Passes will always be at the start
+            playerTurn++;
+            acceptQuest();
+        });
+
+        failButton.addEventListener("click", () => {
+            questResults.push("red"); // Fails will always be at the end
+            playerTurn++;
+            acceptQuest();
+        });
+
+        voteContainer.appendChild(passPhone);
+        voteContainer.appendChild(passButton);
+        voteContainer.appendChild(failButton);
+    }
 }
 
-function morePlayers() {
+function displayResults() {
+    console.log(questResults);
+    const recContainer = document.createElement("div");
+    recContainer.style.position = "fixed"; // Sticks to the top of the viewport
+    recContainer.style.top = "100px"; // Distance from the top of the screen
+    recContainer.style.left = "50%"; // Centers the container horizontally
+    recContainer.style.transform = "translateX(-50%)"; // Centers based on its own width
+    recContainer.style.display = "flex"; 
+    recContainer.style.flexDirection = "column"; // Arrange rectangles on top of each other
+    recContainer.style.gap = "10px"; // Space between rectangles
 
+    document.body.appendChild(recContainer);
+
+    for (let i = 0; i < selectedPlayers.length; i++) {
+        setTimeout(() => {
+            const rectangle = document.createElement("div");
+            rectangle.style.width = "300px"; // Width of each rectangle
+            rectangle.style.height = "50px"; // Height of each rectangle
+            rectangle.style.backgroundColor = questResults[i]; // Colour
+            recContainer.appendChild(rectangle);
+        }, 2000 + i * 1500); // Delay increases by 1 second for each box
+    }
+
+    const totalDelay = 1000 + (selectedPlayers.length - 1) * 1500;
+
+    if (questResults.includes("red")) { // Udates the questLog
+        questLog.push("red");
+    } else {
+        questLog.push("green");
+    }
+
+    setTimeout(() => {
+        const confirmButton = document.createElement("button");
+        confirmButton.textContent = "Continue";
+        recContainer.appendChild(confirmButton);
+        confirmButton.addEventListener("click", () => {
+            squareColour[quest-1] = questLog[quest-1];
+            quest++; // Update to next quest
+            selectedPlayers = []; // Empties selectedPlayers
+            questResults = []; // Empties questResults
+            recContainer.innerHTML = ""; // Clears current container
+
+            document.getElementById('quest-results').classList.add('hidden');
+            document.getElementById('quest-page').classList.remove('hidden');
+            launchQuest();
+        });
+    }, totalDelay);
+
+   
 }
