@@ -33,6 +33,7 @@ let basicGood = 0;
 let basicEvil = 0;
 let goodEvilList = [];
 let allEvil = []; // All evil players (shown only to Merlin)
+let allGood = []; // All good players
 let filteredEvils;
 let oberonEvil = []; // Oberon is never in this list, this is shown to all other Evil
 let filteredOberon;
@@ -255,7 +256,7 @@ function compileRoles() {
             playerTeamDictionary[playerArray[shuffledElements[i]]] = goodEvilList[i];
         }
 
-        // Populate the list of evil players
+        // Populate the list of all players
         for (let i = 0; i < playerNumber; i++) {
             if (goodEvilList[i] == "Evil" && selectedExtraRoles[i] != "Mordred") {
                 allEvil.push(playerArray[shuffledElements[i]]); // All the evil players
@@ -265,6 +266,9 @@ function compileRoles() {
             }
             if (selectedExtraRoles[i] == "Merlin" || selectedExtraRoles[i] == "Morgana") {
                 percival.push(playerArray[shuffledElements[i]]); // Merlin and morgana players
+            }
+            if (goodEvilList[i] == "Good") {
+                allGood.push(playerArray[shuffledElements[i]]);
             }
         }
        
@@ -432,6 +436,17 @@ function initQuests() {
 }
 
 function launchQuest() {
+    // Win conditions
+    if (questLog.filter(item => item === "red").length == 3) {
+        document.getElementById("quest-page").classList.add('hidden');
+        document.getElementById("evil-victory").classList.remove('hidden');
+    }
+    if (questLog.filter(item => item === "green").length == 3) {
+        document.getElementById("quest-page").classList.add('hidden');
+        document.getElementById("assassin-phase").classList.remove('hidden');
+        assassinPhase();
+    }
+
     // For each quest, present the corresponding prompts
     const container = document.getElementById("quest-launch");
     container.innerHTML = "";
@@ -446,6 +461,12 @@ function launchQuest() {
     container.appendChild(questTitle);
     container.appendChild(questLeader);
     container.appendChild(questText);
+
+    if (playerNumber >= 7 && quest == 4) {
+        const twoFails = document.createElement("h3");
+        twoFails.textContent = "Note: this quest requires 2 FAILS to fail."
+        container.appendChild(twoFails);
+    }
 
     playerArray.forEach(player => {
         const checkbox = document.createElement("input");
@@ -467,17 +488,26 @@ function launchQuest() {
     const rejectTeam = document.createElement("button");
     const acceptTeam = document.createElement("button");
     const spacer = document.createElement("span");
+    const questProgress = document.createElement("h2");
 
-    voteInstructions.textContent = "Vote on whether this team goes on quest " + `${quest}`;
+    voteInstructions.textContent = "Vote on whether this team goes on the quest";
     rejectTeam.textContent = "Reject Team";
     rejectTeam.id = "rejectButton";
     acceptTeam.textContent = "Accept Team";
     acceptTeam.id = "acceptButton";
     spacer.textContent = "  ";
+    questProgress.textContent = "Quest Progress";
+    questProgress.style.position = "fixed";
+    questProgress.style.bottom = "100px";
+    questProgress.style.left = "50%"; 
+    questProgress.style.transform = "translateX(-50%)"; 
+    questProgress.style.textAlign = "center";  
+
     container.appendChild(voteInstructions);
     container.appendChild(rejectTeam);
     container.appendChild(spacer);
     container.appendChild(acceptTeam);
+    container.appendChild(questProgress);
 
     rejectTeam.addEventListener("click", () => {
         const checkboxes = container.querySelectorAll('input[name="questTeam"]:checked');
@@ -509,7 +539,6 @@ function launchQuest() {
             document.getElementById("quest-execute").classList.remove('hidden');
             playerTurn = 0;
             acceptQuest();
-            // questLeaderIndex++;
             return
         }
         
@@ -637,10 +666,18 @@ function displayResults() {
 
     const totalDelay = 3000 + (selectedPlayers.length - 1) * 1500;
 
-    if (questResults.includes("red")) { // Udates the questLog
-        questLog.push("red");
-    } else {
-        questLog.push("green");
+    if (playerNumber >= 7 && quest == 4) { // If this is the quest that requires two fails
+        if (questResults.filter(item => item === "red").length >= 2) {
+            questLog.push("red");
+        } else {
+            questLog.push("green");
+        }
+    } else { // If this is a regular quest
+        if (questResults.includes("red")) { // Udates the questLog
+            questLog.push("red");
+        } else {
+            questLog.push("green");
+        }
     }
 
     setTimeout(() => {
@@ -661,3 +698,32 @@ function displayResults() {
         });
     }, totalDelay);
 }
+
+
+function assassinPhase() {
+    const container = document.getElementById("assassin-choices");
+    container.innerHTML = "";
+
+    for (let i = 0; i < playerRatio[playerNumber-5][0]; i++) {
+        const button = document.createElement('button');
+        button.textContent = `${allGood[i]}`;
+        button.addEventListener("click", () => {
+            if (playerDictionary[allGood[i]] == "Merlin") {
+                document.getElementById("assassin-phase").classList.add('hidden');
+                document.getElementById("evil-victory").classList.remove('hidden');
+            } else {
+                document.getElementById("assassin-phase").classList.add('hidden');
+                document.getElementById("good-victory").classList.remove('hidden');
+            }
+        });
+
+        container.appendChild(button);
+        container.appendChild(document.createElement('br')); // Add line breaks
+        container.appendChild(document.createElement('br'));
+    }
+
+    
+}
+
+
+// Add the reject mission case
