@@ -41,6 +41,7 @@ let percival = []; // This contains Merlin and Morgana, if Morgana is playing
 
 // Global variables for gameplay
 let currentIndex = 0;
+let teamLeaderArray = []; // Array for the random shuffled order of team leaders
 let playerNumbersIndex;
 let selectedPlayers = []; // Players selected to go on a quest
 let quest = 1; // Counter to keep track of the quest number
@@ -302,6 +303,8 @@ function renderButton() {
     } else {
         document.getElementById('reveal-roles-page').classList.add('hidden');
         document.getElementById('quest-page').classList.remove('hidden');
+        teamLeaderArray = [...playerArray]; // Create a shallow copy of the playerArray
+        teamLeaderArray = shuffleArray(teamLeaderArray); // Randomly shuffle the order of team leaders
         initQuests();
     }
 }
@@ -456,7 +459,7 @@ function launchQuest() {
     const questText = document.createElement("p");
     // questLeaderIndex is player index because if a quest rejects, the leader is different but the quest number is the same
     questTitle.textContent = "Quest " + `${quest}`;
-    questLeader.textContent = `${playerArray[questLeaderIndex % playerNumber]}` + " is the Team Leader";
+    questLeader.textContent = `${teamLeaderArray[questLeaderIndex % playerNumber]}` + " is the Team Leader";
     questText.textContent = "Select " + `${questNumbers[playerNumbersIndex][quest-1]}`+ " players to go on this quest";
     container.appendChild(questTitle);
     container.appendChild(questLeader);
@@ -535,6 +538,7 @@ function launchQuest() {
             selectedPlayers = [];
             return // Re-iterates in the while loop without changing the quest counter
         } else {
+            questRejects = 0; // Reset the reject counter
             document.getElementById("quest-page").classList.add('hidden');
             document.getElementById("quest-execute").classList.remove('hidden');
             playerTurn = 0;
@@ -567,16 +571,23 @@ function launchQuest() {
 
 // If team is rejected for a quest
 function rejectQuest() {
+    if (questRejects == 5) { // If 5 consecutive teams are rejected, Evil wins
+        document.getElementById("quest-reject").classList.add('hidden');
+        document.getElementById("evil-victory").classList.remove('hidden');
+    }
     const container = document.getElementById("quest-reject-message");
     const rejectedMessage = document.createElement("h2");
+    const rejectWarning = document.createElement("p");
     const passPhoneMessage = document.createElement("p");
     const rejectedButton = document.createElement("button");
     
-    rejectedMessage.textContent = `${playerArray[questLeaderIndex % playerNumber]}` +"'s team was rejected";
-    passPhoneMessage.textContent = "Pass the phone to " + `${playerArray[(questLeaderIndex + 1) % playerNumber]}`;
+    rejectedMessage.textContent = `${teamLeaderArray[questLeaderIndex % playerNumber]}` +"'s team was rejected";
+    rejectWarning.textContent = "Team rejection counter: " + `${questRejects}`;
+    passPhoneMessage.textContent = "Pass the phone to " + `${teamLeaderArray[(questLeaderIndex + 1) % playerNumber]}`;
     rejectedButton.textContent = "Continue";
     
     container.appendChild(rejectedMessage);
+    container.appendChild(rejectWarning);
     container.appendChild(passPhoneMessage);
     container.appendChild(rejectedButton);
 
@@ -727,3 +738,5 @@ function assassinPhase() {
 
 
 // Add the reject mission case
+// Add the randomized order of the team leaders
+// Fix phone title sizes
