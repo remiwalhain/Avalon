@@ -66,12 +66,19 @@ body {
     height: 80px; /* Set the height of the container */
     border: 1px solid #ccc; /* Optional border */
     padding: 10px; /* Optional padding */
-    overflow-y: scroll; /* Enable vertical scrolling */
+    overflow-y: auto !important; /* Enable vertical scrolling */
     scrollbar-width: thin; /* Firefox: make scrollbar thin */
     margin: 0 auto; /* Ensure horizontal centering within parent */
     flex-direction: column; /* Ensure items stack vertically */
     justify-content: center; /* Optional: center items vertically */
     align-items: center; /* Center child elements horizontally */
+}
+
+@media (max-width: 600px) {
+    #checkboxContainer {
+        width: 90%; /* Adjust width to 90% of the screen */
+        height: 120px; /* Slightly smaller height for compact displays */
+    }
 }
 
 #checkboxContainer::-webkit-scrollbar {
@@ -89,4 +96,8 @@ body {
 
 .hidden {
     display: none;
+}
+
+* {
+    outline: 1px solid red; /* Highlight all elements */
 }
