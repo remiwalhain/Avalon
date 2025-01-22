@@ -451,11 +451,17 @@ function launchQuest() {
     }
 
     // For each quest, present the corresponding prompts
-    const container = document.getElementById("quest-launch");
+    const container = document.getElementById("quest-launch"); // FIX THIS LOCATION
     container.innerHTML = "";
 
-    const questTitle = document.createElement("h2");
-    const questLeader = document.createElement("p");
+    const checkboxContainer = document.getElementById("checkboxContainer");
+    checkboxContainer.innerHTML = "";
+
+    const container2 = document.getElementById("quest-launch-2"); 
+    container2.innerHTML = "";
+
+    const questTitle = document.createElement("h1");
+    const questLeader = document.createElement("h2");
     const questText = document.createElement("p");
     // questLeaderIndex is player index because if a quest rejects, the leader is different but the quest number is the same
     questTitle.textContent = "Quest " + `${quest}`;
@@ -482,16 +488,16 @@ function launchQuest() {
         label.htmlFor = player;
         label.textContent = player;
 
-        container.appendChild(checkbox);
-        container.appendChild(label);
-        container.appendChild(document.createElement("br")); // For spacing
+        checkboxContainer.appendChild(checkbox);
+        checkboxContainer.appendChild(label);
+        checkboxContainer.appendChild(document.createElement("br"));
     });
     
     const voteInstructions = document.createElement("p");
     const rejectTeam = document.createElement("button");
     const acceptTeam = document.createElement("button");
     const spacer = document.createElement("span");
-    const questProgress = document.createElement("h2");
+    const questProgress = document.createElement("h3");
 
     voteInstructions.textContent = "Vote on whether this team goes on the quest";
     rejectTeam.textContent = "Reject Team";
@@ -506,14 +512,14 @@ function launchQuest() {
     questProgress.style.transform = "translateX(-50%)"; 
     questProgress.style.textAlign = "center";  
 
-    container.appendChild(voteInstructions);
-    container.appendChild(rejectTeam);
-    container.appendChild(spacer);
-    container.appendChild(acceptTeam);
-    container.appendChild(questProgress);
+    container2.appendChild(voteInstructions);
+    container2.appendChild(rejectTeam);
+    container2.appendChild(spacer);
+    container2.appendChild(acceptTeam);
+    container2.appendChild(questProgress);
 
     rejectTeam.addEventListener("click", () => {
-        const checkboxes = container.querySelectorAll('input[name="questTeam"]:checked');
+        const checkboxes = checkboxContainer.querySelectorAll('input[name="questTeam"]:checked');
         checkboxes.forEach(checkbox => selectedPlayers.push(checkbox.value));
         if (questNumbers[playerNumbersIndex][quest-1] != selectedPlayers.length) {
             alert("Select exactly " + `${questNumbers[playerNumbersIndex][quest-1]}` + " players");
@@ -530,7 +536,7 @@ function launchQuest() {
     });
     
     acceptTeam.addEventListener("click", () => {
-        const checkboxes = container.querySelectorAll('input[name="questTeam"]:checked');
+        const checkboxes = checkboxContainer.querySelectorAll('input[name="questTeam"]:checked');
         checkboxes.forEach(checkbox => selectedPlayers.push(checkbox.value));
         console.log(selectedPlayers);
         if (questNumbers[playerNumbersIndex][quest-1] != selectedPlayers.length) {
@@ -565,7 +571,7 @@ function launchQuest() {
         squaresContainer.appendChild(square);
     }
       
-    container.appendChild(squaresContainer);
+    container2.appendChild(squaresContainer);
 
 }
 
@@ -737,6 +743,6 @@ function assassinPhase() {
 }
 
 
-// Add the reject mission case
-// Add the randomized order of the team leaders
+
 // Fix phone title sizes
+// Make it look good

@@ -61,6 +61,32 @@ body {
     text-align: center; /* Optional: Centers the buttons horizontally */
 }
 
+#checkboxContainer {
+    width: 200px; /* Set the width of the container */
+    height: 80px; /* Set the height of the container */
+    border: 1px solid #ccc; /* Optional border */
+    padding: 10px; /* Optional padding */
+    overflow-y: scroll; /* Enable vertical scrolling */
+    scrollbar-width: thin; /* Firefox: make scrollbar thin */
+    margin: 0 auto; /* Ensure horizontal centering within parent */
+    flex-direction: column; /* Ensure items stack vertically */
+    justify-content: center; /* Optional: center items vertically */
+    align-items: center; /* Center child elements horizontally */
+}
+
+#checkboxContainer::-webkit-scrollbar {
+    width: 8px; /* Chrome, Safari, Edge: set scrollbar width */
+}
+
+#checkboxContainer::-webkit-scrollbar-thumb {
+    background-color: #888; /* Scrollbar thumb color */
+    border-radius: 4px; /* Rounded scrollbar edges */
+}
+
+#checkboxContainer::-webkit-scrollbar-thumb:hover {
+    background-color: #555; /* Scrollbar thumb hover color */
+}
+
 .hidden {
     display: none;
 }
