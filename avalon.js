@@ -582,8 +582,8 @@ function rejectQuest() {
         document.getElementById("evil-victory").classList.remove('hidden');
     }
     const container = document.getElementById("quest-reject-message");
-    const rejectedMessage = document.createElement("h2");
-    const rejectWarning = document.createElement("p");
+    const rejectedMessage = document.createElement("h1");
+    const rejectWarning = document.createElement("h2");
     const passPhoneMessage = document.createElement("p");
     const rejectedButton = document.createElement("button");
     
@@ -591,6 +591,7 @@ function rejectQuest() {
     rejectWarning.textContent = "Team rejection counter: " + `${questRejects}`;
     passPhoneMessage.textContent = "Pass the phone to " + `${teamLeaderArray[(questLeaderIndex + 1) % playerNumber]}`;
     rejectedButton.textContent = "Continue";
+    rejectedButton.id = "rejectedButton";
     
     container.appendChild(rejectedMessage);
     container.appendChild(rejectWarning);
@@ -616,6 +617,7 @@ function acceptQuest() {
 
         const revealButton = document.createElement("button");
         revealButton.textContent = "Reveal Results";
+        revealButton.id = "revealButton";
         revealButton.addEventListener("click", () => {
             document.getElementById("quest-execute").classList.add('hidden');
             document.getElementById("quest-results").classList.remove('hidden');
@@ -629,11 +631,19 @@ function acceptQuest() {
 
         const passPhone = document.createElement("h2");
         const passButton = document.createElement("button");
+        const buttonWrapper = document.createElement("div"); // Wrapper for buttons
         const failButton = document.createElement("button");
 
         passPhone.textContent = "Pass the phone to " + `${selectedPlayers[playerTurn]}`;
         passButton.textContent = "PASS";
+        passButton.id = "passButton";
         failButton.textContent = "FAIL";
+        failButton.id = "failButton";
+        
+        // Add styles to the wrapper for proper alignment
+        buttonWrapper.style.display = "flex";
+        buttonWrapper.style.justifyContent = "center"; // Center the buttons horizontally
+        buttonWrapper.style.gap = "50px"; // Add space between buttons
 
         passButton.addEventListener("click", () => {
             questResults.unshift("green"); // Passes will always be at the start
@@ -653,9 +663,11 @@ function acceptQuest() {
             }
         });
 
+        buttonWrapper.appendChild(passButton);
+        buttonWrapper.appendChild(failButton);
+        
         voteContainer.appendChild(passPhone);
-        voteContainer.appendChild(passButton);
-        voteContainer.appendChild(failButton);
+        voteContainer.appendChild(buttonWrapper);
     }
 }
 
@@ -700,6 +712,7 @@ function displayResults() {
     setTimeout(() => {
         const confirmButton = document.createElement("button");
         confirmButton.textContent = "Continue";
+        confirmButton.id = "confirmButton"
         recContainer.appendChild(confirmButton);
         confirmButton.addEventListener("click", () => {
             squareColour[quest-1] = questLog[quest-1];

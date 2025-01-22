@@ -19,8 +19,8 @@ body {
 }
 
 #nextButton {
-    padding: 20px 40px; /* Larger padding*/
-    font-size: 24px;    /* Bigger text */
+    padding: 15px 30px; /* Larger padding*/
+    font-size: 20px;    /* Bigger text */
     border-radius: 10px; /* Optional: rounded corners */
     background-color: #555; /* Optional: distinct background color */
     color: white;
@@ -59,6 +59,73 @@ body {
 #reveal-roles {
     margin-top: 100px; /* Moves the reveal-roles 100px down from the top */
     text-align: center; /* Optional: Centers the buttons horizontally */
+}
+
+#rejectButton {
+    padding: 10px 20px; /* Larger padding */
+    font-size: 18px;    /* Bigger text */
+    border-radius: 10px; /* Optional: rounded corners */
+    background-color: #555; /* Optional: distinct background color */
+    color: white;
+    cursor: pointer;
+    border: 2px solid red; /* Adds a red border */
+}
+
+#acceptButton {
+    padding: 10px 20px; /* Larger padding */
+    font-size: 18px;    /* Bigger text */
+    border-radius: 10px; /* Optional: rounded corners */
+    background-color: #555; /* Optional: distinct background color */
+    color: white;
+    cursor: pointer;
+    border: 2px solid green; /* Adds a red border */
+}
+
+#failButton {
+    padding: 10px 20px; /* Larger padding */
+    font-size: 20px;    /* Bigger text */
+    border-radius: 10px; /* Optional: rounded corners */
+    background-color: #555; /* Optional: distinct background color */
+    color: white;
+    cursor: pointer;
+    border: 2px solid red; /* Adds a red border */
+}
+
+#passButton {
+    padding: 10px 20px; /* Larger padding */
+    font-size: 20px;    /* Bigger text */
+    border-radius: 10px; /* Optional: rounded corners */
+    background-color: #555; /* Optional: distinct background color */
+    color: white;
+    cursor: pointer;
+    border: 2px solid green; /* Adds a red border */
+}
+
+
+#revealButton {
+    padding: 10px 20px; /* Larger padding */
+    font-size: 18px;    /* Bigger text */
+    border-radius: 10px; /* Optional: rounded corners */
+    background-color: #555; /* Optional: distinct background color */
+    color: white;
+    cursor: pointer;
+}
+
+#confirmButton {
+    padding: 5px 10px; /* Larger padding */
+    font-size: 18px;    /* Bigger text */
+    background-color: #555; /* Optional: distinct background color */
+    color: white;
+    cursor: pointer;
+}
+
+#rejectedButton {
+    padding: 10px 20px; /* Larger padding */
+    font-size: 18px;    /* Bigger text */
+    border-radius: 10px; /* Optional: rounded corners */
+    background-color: #555; /* Optional: distinct background color */
+    color: white;
+    cursor: pointer;
 }
 
 #checkboxContainer {
