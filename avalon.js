@@ -93,6 +93,16 @@ function goToNamePage() {
     }
 }
 
+function goToRulePage() {
+    document.getElementById('start-page').classList.add('hidden');
+    document.getElementById('rules-page').classList.remove('hidden');
+}
+
+function returnToStartPage() {
+    document.getElementById('rules-page').classList.add('hidden');
+    document.getElementById('start-page').classList.remove('hidden');
+}
+
 function submitNames() {
     const container = document.getElementById('text-inputs-container');
     const inputs = container.querySelectorAll('input[type="text"]');
@@ -755,7 +765,3 @@ function assassinPhase() {
     
 }
 
-
-
-// Fix phone title sizes
-// Make it look good

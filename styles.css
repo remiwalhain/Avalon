@@ -18,6 +18,22 @@ body {
     cursor: pointer;
 }
 
+#rules-button {
+    padding: 8px 16px; /* Larger padding */
+    font-size: 16px;    /* Bigger text */
+    background-color: #ababab; /* Optional: distinct background color */
+    color: white;
+    cursor: pointer; 
+}
+
+#return-button {
+    padding: 8px 16px; /* Larger padding */
+    font-size: 16px;    /* Bigger text */
+    background-color: #ababab; /* Optional: distinct background color */
+    color: white;
+    cursor: pointer; 
+}
+
 #nextButton {
     padding: 15px 30px; /* Larger padding*/
     font-size: 20px;    /* Bigger text */

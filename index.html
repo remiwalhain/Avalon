@@ -15,6 +15,9 @@
         <br>
         <br>
         <button id="start-button" onclick="goToNamePage()">Start</button>
+        <br>
+        <br>
+        <button id="rules-button" onclick="goToRulePage()">Rules</button>
     </div>
 
     <div id="name-page" class="hidden">
@@ -23,23 +26,48 @@
         <button id="nextButton" onclick="submitNames()">Next</button>
     </div>
 
+    <div id="rules-page" class="hidden">
+        <h2>Avalon is a game of hidden loyalty.</h2>
+        <p>Players are either Loyal Servants of Arthur or aligned with the Evil ways of Mordred.</p>
+        <p><span style="color: rgb(0, 184, 0);">Good</span> wins the game by successfully completing three Quests.</p>
+        <p><span style="color: red;">Evil</span> wins if three Quests end in failure.</p>
+        <p><span style="color: red;">Evil</span> can also win by assassinating Merlin at game's end or if a 
+            Quest cannot be undertaken.</p>
+        <hr>
+        <h2>Roles</h2>
+        <p><span style="color: rgb(0, 184, 0);">Merlin</span> knows the identity of the Evil players.</p>
+        <p><span style="color: red;">Assassin</span> can win the game by assassinating Merlin in case three Quests succeed.</p>
+        <p><span style="color: rgb(0, 184, 0);">Percival</span> knows Merlin's identity.</p>
+        <p><span style="color: red;">Mordred's</span> identity is not revealed to Merlin.</p>
+        <p><span style="color: red;">Oberon</span> does not reveal himself to Evil players.</p>
+        <p><span style="color: red;">Morgana </span> appears as Merlin to Percival.</p>
+        <button id="return-button" onclick="returnToStartPage()">Return</button>
+    </div>
+
     <div id="extra-roles-page" class="hidden">
         <h1>Select Extra Roles</h1>
         <form id="checkbox-form">
             <label>
-                <input type="checkbox" name="Percival" value="Percival" class="Good"> Percival
+                <input type="checkbox" name="Percival" value="Percival" class="Good"> 
+                <span style="color: rgb(0, 184, 0);">Percival</span>
             </label>
             <br>
-            <label>
-                <input type="checkbox" name="Mordred" value="Mordred" class="Evil"> Mordred
-            </label>
             <br>
             <label>
-                <input type="checkbox" name="Morgana" value="Morgana" class="Evil"> Morgana
+                <input type="checkbox" name="Mordred" value="Mordred" class="Evil"> 
+                <span style="color: red;">Mordred</span>
             </label>
             <br>
+            <br>
             <label>
-                <input type="checkbox" name="Oberon" value="Oberon" class="Evil"> Oberon
+                <input type="checkbox" name="Morgana" value="Morgana" class="Evil">
+                <span style="color: red;">Morgana</span>
+            </label>
+            <br>
+            <br>
+            <label>
+                <input type="checkbox" name="Oberon" value="Oberon" class="Evil">
+                <span style="color: red;">Oberon</span>
             </label>
         </form>
         <br>
