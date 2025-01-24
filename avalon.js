@@ -517,7 +517,7 @@ function launchQuest() {
     spacer.textContent = "  ";
     questProgress.textContent = "Quest Progress";
     questProgress.style.position = "fixed";
-    questProgress.style.bottom = "100px";
+    questProgress.style.bottom = "65px";
     questProgress.style.left = "50%"; 
     questProgress.style.transform = "translateX(-50%)"; 
     questProgress.style.textAlign = "center";  
