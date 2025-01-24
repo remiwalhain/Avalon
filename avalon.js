@@ -470,8 +470,8 @@ function launchQuest() {
     const container2 = document.getElementById("quest-launch-2"); 
     container2.innerHTML = "";
 
-    const questTitle = document.createElement("h1");
-    const questLeader = document.createElement("h2");
+    const questTitle = document.createElement("h2");
+    const questLeader = document.createElement("h3");
     const questText = document.createElement("p");
     // questLeaderIndex is player index because if a quest rejects, the leader is different but the quest number is the same
     questTitle.textContent = "Quest " + `${quest}`;
@@ -567,7 +567,7 @@ function launchQuest() {
     // Adding a container for the quest squares
     const squaresContainer = document.createElement("div");
     squaresContainer.style.position = "fixed"; // Sticks to the bottom of the viewport
-    squaresContainer.style.bottom = "50px"; // Distance from the bottom of the screen
+    squaresContainer.style.bottom = "20px"; // Distance from the bottom of the screen
     squaresContainer.style.left = "50%"; // Centers the container horizontally
     squaresContainer.style.transform = "translateX(-50%)"; // Centers based on its own width
     squaresContainer.style.display = "flex"; // Arrange squares in a row
