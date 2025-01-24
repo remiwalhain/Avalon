@@ -369,7 +369,7 @@ function showText() {
             } else {
                 roleRules.textContent = `${rolesDictionary[playerDictionary[thisPlayer]]}` + "is " + filteredOberon.join(", ");
             }
-            roleExplained.textContent = "Your special power is that you appear to be Merlin (to Percival)."
+            roleExplained.textContent = "Your special power is that you appear as Merlin (to Percival)."
             break;
 
         case "Percival":
