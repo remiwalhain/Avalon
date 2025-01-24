@@ -1,5 +1,4 @@
 // Global Constants
-// ---------------------------------------------------------------------------------------------
 // The good to evil player ratio, indices 0-5 are total players 5-10 respectively
 const playerRatio = [[3, 2], [4, 2], [4, 3], [5, 3], [6, 3], [6,4]];
 
@@ -26,12 +25,12 @@ let playerTeamDictionary = {};
 
 // Global variables for setup
 let playerNumber = 0;
-let playerArray = [];
-let selectedExtraRoles = [];
-let shuffledElements = [];
+let playerArray = []; // Holds the input names of all the players
+let selectedExtraRoles = []; // Holds the extra roles selected
+let shuffledElements = []; // Holds the shuffled order
 let basicGood = 0;
 let basicEvil = 0;
-let goodEvilList = [];
+let goodEvilList = []; // List of all evil players
 let allEvil = []; // All evil players (shown only to Merlin)
 let allGood = []; // All good players
 let filteredEvils;
@@ -66,6 +65,7 @@ function shuffleArray(array) {
     return array;
 }
 
+// Gets the number of players and prompts that many inputs for player names
 function goToNamePage() {
     const numberInput = document.getElementById('player-count');
     playerNumber = numberInput.value.trim();
@@ -93,16 +93,19 @@ function goToNamePage() {
     }
 }
 
+// Opens rules menu
 function goToRulePage() {
     document.getElementById('start-page').classList.add('hidden');
     document.getElementById('rules-page').classList.remove('hidden');
 }
 
+// Closes rules menu
 function returnToStartPage() {
     document.getElementById('rules-page').classList.add('hidden');
     document.getElementById('start-page').classList.remove('hidden');
 }
 
+// Submits the names to the player array
 function submitNames() {
     const container = document.getElementById('text-inputs-container');
     const inputs = container.querySelectorAll('input[type="text"]');
@@ -115,23 +118,11 @@ function submitNames() {
    
 }
 
-// ROLES
-// Minions of mordred (evil) know each other
-// Merlin (good) knows minions of mordred
-// Assassin (evil) needs to guess Merlin
-// Percival (good) knows who Merlin is
-// Mordred (evil) is not known to Merlin
-// Oberon (evil) is not known to other evil players and does not know the other evil players
-// Morganna (evil) appears as Merlin, revealing herself to Percival as Merlin
-
-// For 5 players, if Percival is playing, add either Mordred or Morgana
+// // Compiles the roles (default and extra) into an array. Assigns extra roles (if any) and default roles to all players
 // For 5-6 players, you can add 2 extra roles
 // For 7-9 players, you can add 3 extra roles
 // For 10 players, you can add 4 extra roles
-
 function compileRoles() {
-    // Compiles the total roles (default and extra) into an array
-    // Assign extra roles (if any) and default roles to all players
     const checkboxes = document.querySelectorAll('#checkbox-form input[type="checkbox"]');
     const selectedExtraRolesClass = Array.from(checkboxes).filter(checkbox => checkbox.checked);
     selectedExtraRoles = Array.from(checkboxes).filter(checkbox => checkbox.checked).map(checkbox => checkbox.value);
@@ -283,17 +274,18 @@ function compileRoles() {
             }
         }
        
-        // playerArray (the names of the players)
-        // selectedExtraRoles array (all the roles in the given game)
-        // playerDictionary which associates each player to their role
-        // playerTeamDictionary which associates each player to their team (good evil)
-        // shuffledElements array (numbers [0 to number of players - 1] shuffled randomly), which links the player name 
-        // at index 0,1,2... to the role at index shuffledElements[0], shuffledElements[1], shuffledElements[2],...
         document.getElementById('extra-roles-page').classList.add('hidden');
         document.getElementById('reveal-prompt-page').classList.remove('hidden');
     }
     
 }
+
+// playerArray (the names of the players)
+// selectedExtraRoles array (all the roles in the given game)
+// playerDictionary which associates each player to their role
+// playerTeamDictionary which associates each player to their team (good evil)
+// shuffledElements array (numbers [0 to number of players - 1] shuffled randomly), which links the player name 
+// at index 0,1,2... to the role at index shuffledElements[0], shuffledElements[1], shuffledElements[2],...
 
 // Function to render the role-reveal button
 function renderButton() {
@@ -419,12 +411,7 @@ function readyToReveal() {
     renderButton();
 }
 
-// NOTE: The 4th Quest in games of 7 or more requires at least two Fails to be a failed Quest
-// playerArray is an array of each player name
-// playerDictionary associates each player to their role
-// playerTeamDictionary associates each player to their team (good evil)
-
-// Calls the appropriate function to initiate the appropriate gameplay
+// Sets playerNumbersIndex to the appropriate value, then launches the quest
 function initQuests() {
     switch(playerNumber) {
         case "5":
@@ -448,6 +435,7 @@ function initQuests() {
     launchQuest();
 }
 
+// Main quest function; handles page layout, quest team voting, pass/fail phase, and quest progress
 function launchQuest() {
     // Win conditions
     if (questLog.filter(item => item === "red").length == 3) {
@@ -473,7 +461,9 @@ function launchQuest() {
     const questTitle = document.createElement("h2");
     const questLeader = document.createElement("h3");
     const questText = document.createElement("p");
-    // questLeaderIndex is player index because if a quest rejects, the leader is different but the quest number is the same
+
+    // questLeaderIndex is player index because if a quest rejects, 
+    // the leader is different but the quest number is the same
     questTitle.textContent = "Quest " + `${quest}`;
     questLeader.textContent = `${teamLeaderArray[questLeaderIndex % playerNumber]}` + " is the Team Leader";
     questText.textContent = "Select " + `${questNumbers[playerNumbersIndex][quest-1]}`+ " players to go on this quest";
@@ -619,7 +609,7 @@ function rejectQuest() {
     })
 }
 
-// If team is accepted to go on the quest
+// If team is accepted to go on the quest; handles pass/fail phase
 function acceptQuest() {
     if (selectedPlayers.length == playerTurn) { // If each player has voted
         const seeResults = document.getElementById("quest-vote");
@@ -681,6 +671,7 @@ function acceptQuest() {
     }
 }
 
+// Displays the quest results, with a time delay
 function displayResults() {
     const recContainer = document.createElement("div");
     recContainer.style.position = "fixed"; // Sticks to the top of the viewport
@@ -739,7 +730,7 @@ function displayResults() {
     }, totalDelay);
 }
 
-
+// If good passes three quests
 function assassinPhase() {
     const container = document.getElementById("assassin-choices");
     container.innerHTML = "";
