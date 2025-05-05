@@ -394,7 +394,7 @@ function showText() {
     revealContainer.appendChild(roleRules);
     revealContainer.appendChild(roleExplained);
     revealContainer.appendChild(continuePrompt);
-  
+
     const continueButton = document.createElement("button");
     continueButton.textContent = "Continue";
     continueButton.id = "contButton";
@@ -402,7 +402,10 @@ function showText() {
       currentIndex++; // Move to the next index
       renderButton(); // Re-render the button
     });
-    revealContainer.appendChild(continueButton);
+
+    setTimeout(() => { // Set a delay for each player (each player must look at their role a minimum of 6 seconds)
+        revealContainer.appendChild(continueButton);
+    }, 6000);
 }
 
 function readyToReveal() {
@@ -633,41 +636,66 @@ function acceptQuest() {
         const passButton = document.createElement("button");
         const buttonWrapper = document.createElement("div"); // Wrapper for buttons
         const failButton = document.createElement("button");
+        const confirmButton = document.createElement("button");
 
         passPhone.textContent = "Pass the phone to " + `${selectedPlayers[playerTurn]}`;
         passButton.textContent = "PASS";
         passButton.id = "passButton";
         failButton.textContent = "FAIL";
         failButton.id = "failButton";
+        confirmButton.textContent = "CONFIRM";
+        confirmButton.id = "confirmButton";
+        confirmButton.style.display = "none"; // Initially hidden
+        confirmButton.style.borderRadius = "10px";
+        confirmButton.style.margin = "20px auto 0"; // Top margin + auto centering
+        confirmButton.style.textAlign = "center";
+        confirmButton.style.alignSelf = "center";
         
         // Add styles to the wrapper for proper alignment
         buttonWrapper.style.display = "flex";
         buttonWrapper.style.justifyContent = "center"; // Center the buttons horizontally
         buttonWrapper.style.gap = "50px"; // Add space between buttons
 
+        let selection = null;
+
         passButton.addEventListener("click", () => {
-            questResults.unshift("green"); // Passes will always be at the start
+            passButton.style.border = "3px solid green";
+            failButton.style.border = "none";
+            selection = "pass";
+            confirmButton.style.display = "block";
+        });
+
+        failButton.addEventListener("click", () => {
+            failButton.style.border = "3px solid red";
+            passButton.style.border = "none";
+            selection = "fail";
+            confirmButton.style.display = "block";
+        });
+
+        confirmButton.addEventListener("click", () => {
+            const player = selectedPlayers[playerTurn];
+            const role = playerTeamDictionary[player];
+        
+            if (selection === "pass") {
+                questResults.unshift("green"); // Always at the start
+            } else if (selection === "fail") {
+                if (role === "Good") {
+                    questResults.unshift("green"); // Good players can't fail
+                } else {
+                    questResults.push("red"); // Fails at end
+                }
+            }
+        
             playerTurn++;
             acceptQuest();
         });
 
-        failButton.addEventListener("click", () => {
-            if (playerTeamDictionary[selectedPlayers[playerTurn]] == "Good") { // If a player is good, they cannot FAIL a quest
-                questResults.unshift("green");
-                playerTurn++;
-                acceptQuest();
-            } else {
-                questResults.push("red"); // Fails will always be at the end
-                playerTurn++;
-                acceptQuest();
-            }
-        });
-
         buttonWrapper.appendChild(passButton);
         buttonWrapper.appendChild(failButton);
-        
+        buttonWrapper.appendChild(confirmButton);
         voteContainer.appendChild(passPhone);
         voteContainer.appendChild(buttonWrapper);
+        voteContainer.appendChild(confirmButton);
     }
 }
 
